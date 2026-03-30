@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Susisiekite</h2>
+            
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" class="p-4 border rounded bg-white shadow-sm">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label small">Vardas</label>
+                    <input type="text" name="name" class="form-control rounded-0" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small">El. paštas</label>
+                    <input type="email" name="email" class="form-control rounded-0" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small">Telefonas</label>
+                    <input type="text" name="phone" class="form-control rounded-0" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small">Prekė (Dominanti sritis)</label>
+                    <input type="text" name="interest" value="{{ request.GET.interest }}" class="form-control rounded-0">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small">Žinutė</label>
+                    <textarea name="message" class="form-control rounded-0" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-dark w-100 rounded-0 py-2">SIŲSTI UŽKLAUSĄ</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

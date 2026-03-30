@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h6 class="text-uppercase tracking-widest text-muted small">Mūsų patirtis</h6>
+        <h1 class="display-4 fw-bold">Atlikti darbai</h1>
+        <p class="lead text-secondary">Realizuoti MB „Olrosta“ sprendimai visoje Lietuvoje</p>
+    </div>
+
+    <div class="row g-4">
+        {% for project in projects %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm overflow-hidden project-card">
+                {% if project.image %}
+                <div class="project-image-wrapper" style="height: 300px; overflow: hidden;">
+                    <img src="{{ project.image.url }}" class="card-img-top w-100 h-100" style="object-fit: cover; transition: transform 0.5s ease;" alt="{{ project.title }}">
+                </div>
+                {% endif %}
+                <div class="card-body p-4 text-center">
+                    <h5 class="fw-bold mb-2">{{ project.title }}</h5>
+                    <p class="text-muted small mb-0">{{ project.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <p class="text-muted">Šiuo metu projektų nuotraukų nėra. Įkelkite jas per Admin panelę.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .project-card:hover img {
+        transform: scale(1.05);
+    }
+    .project-card {
+        transition: box-shadow 0.3s ease;
+    }
+    .project-card:hover {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    }
+</style>
+{% endblock %}

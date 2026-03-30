@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ product.name }}">
+            {% else %}
+                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <span class="text-muted">Nuotrauka ruošiama</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-muted text-decoration-none">Pradžia</a></li>
+                    <li class="breadcrumb-item active text-muted">{{ product.category.name }}</li>
+                </ol>
+            </nav>
+            <h1 class="display-5 fw-bold mb-3">{{ product.name }}</h1>
+            <p class="lead text-secondary mb-4">{{ product.description }}</p>
+            
+            <hr>
+            <div class="d-grid gap-2">
+                <a href="{% url 'contact' %}?interest={{ product.name }}" class="btn btn-dark btn-lg px-5 py-3 shadow">Teirautis kainos</a>
+            </div>
+        </div>
+    </div>
+
+    {% if related_products %}
+    <div class="row mt-5 pt-5 border-top">
+        <div class="col-12">
+            <h4 class="fw-bold mb-4">Kiti mūsų sprendimai šioje kategorijoje</h4>
+        </div>
+        {% for rel_product in related_products %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm bg-light overflow-hidden">
+                {% if rel_product.image %}
+                    <img src="{{ rel_product.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ rel_product.name }}">
+                {% else %}
+                    <div class="bg-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <span class="text-muted small">Nėra nuotraukos</span>
+                    </div>
+                {% endif %}
+                <div class="card-body text-center d-flex flex-column">
+                    <h6 class="fw-bold mb-2">{{ rel_product.name }}</h6>
+                    <p class="text-muted small mb-3">{{ rel_product.description|truncatewords:10 }}</p>
+                    <a href="{% url 'product_detail' rel_product.pk %}" class="btn btn-outline-dark btn-sm mt-auto">Peržiūrėti</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row mt-5 pt-5 border-top">
+        <div class="col-md-8 mx-auto">
+            <h3 class="fw-bold mb-4 text-center">Klientų atsiliepimai ({{ product.reviews.count }})</h3>
+            
+            {% if user.is_authenticated %}
+                <div class="card border-0 bg-light shadow-sm mb-5">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">Palikite savo atsiliepimą</h5>
+                        <form method="post" action="{% url 'add_review' product.pk %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label small text-muted text-uppercase fw-bold">Įvertinimas</label>
+                                <select name="rating" class="form-select border-0 shadow-sm">
+                                    <option value="5">5 ★★★★★</option>
+                                    <option value="4">4 ★★★★☆</option>
+                                    <option value="3">3 ★★★☆☆</option>
+                                    <option value="2">2 ★★☆☆☆</option>
+                                    <option value="1">1 ★☆☆☆☆</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small text-muted text-uppercase fw-bold">Jūsų komentaras</label>
+                                <textarea name="content" class="form-control border-0 shadow-sm" rows="3" placeholder="Jūsų patirtis su šiuo produktu..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-dark px-4 shadow-sm">Skelbti atsiliepimą</button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-info border-0 shadow-sm mb-5 text-center">
+                    Norėdami palikti atsiliepimą, turite <a href="{% url 'login' %}" class="fw-bold text-dark">prisijungti</a>.
+                </div>
+            {% endif %}
+
+            {% for review in product.reviews.all|dictsortreversed:"created_at" %}
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong class="h6 mb-0">{{ review.user.username }}</strong>
+                            <span class="text-warning">
+                                {% if review.rating == 5 %}★★★★★{% elif review.rating == 4 %}★★★★☆{% elif review.rating == 3 %}★★★☆☆{% elif review.rating == 2 %}★★☆☆☆{% else %}★☆☆☆☆{% endif %}
+                            </span>
+                        </div>
+                        <p class="text-secondary mb-1">{{ review.content }}</p>
+                        <small class="text-muted small">{{ review.created_at|date:"Y-m-d" }}</small>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center py-5 bg-light rounded shadow-sm">
+                    <p class="text-muted mb-0">Ši prekė dar neturi atsiliepimų. Būkite pirmas!</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

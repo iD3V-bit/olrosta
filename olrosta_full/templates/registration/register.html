@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0 p-4">
+                <h2 class="text-center mb-4 fw-bold">Registracija</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}  <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-dark btn-lg">Sukurti paskyrą</button>
+                    </div>
+                </form>
+                <p class="text-center mt-3">
+                    Jau turite paskyrą? <a href="/login/" class="text-decoration-none">Prisijunkite</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    form p input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    .helptext { font-size: 0.8rem; color: #6c757d; }
+</style>
+{% endblock %}
